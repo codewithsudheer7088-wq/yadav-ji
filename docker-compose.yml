@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: flask-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: flaskdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  web:
+    build: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PORT: 3306
+      DB_NAME: flaskdb
+      DB_PASSWORD: root123
+      SECRET_KEY: mysecretkey
+
+volumes:
+  mysql_data:
